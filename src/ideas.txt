@@ -1,1 +1,0 @@
-immovable objects to let ball swing across (maybe make it appear randomly)
