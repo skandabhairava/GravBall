@@ -27,6 +27,11 @@ jobs:
 
       - run: uv run pyinstaller GravBall.spec
 
+      - name: Show dist contents
+        shell: pwsh
+        run: |
+          Get-ChildItem dist | Format-Table Name,Length
+
       - name: Package
         shell: bash
         run: |
