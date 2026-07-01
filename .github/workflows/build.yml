@@ -34,13 +34,13 @@ jobs:
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cd dist
-            powershell Compress-Archive -Path YourGame.exe -DestinationPath ../release/YourGame-windows.zip
+            powershell Compress-Archive -Path GravBall.exe -DestinationPath ../release/GravBall-windows.zip
           elif [ "${{ runner.os }}" = "macOS" ]; then
             cd dist
-            zip -r ../release/YourGame-macos.zip YourGame
+            zip -r ../release/GravBall-macos.zip GravBall
           else
             cd dist
-            zip -r ../release/YourGame-linux.zip YourGame
+            zip -r ../release/GravBall-linux.zip GravBall
           fi
 
       - uses: actions/upload-artifact@v4
