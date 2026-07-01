@@ -3,6 +3,8 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 import pygame, json, math, moderngl, array, random
+from pathlib import Path
+from platformdirs import user_config_dir
 from enum import Enum
 pygame.init()
 
@@ -29,14 +31,18 @@ class GravClient:
         self.delta = 0
 
         self.player_config: dict[str, str|list[int]|int|float]
+        CONFIG_DIR = Path(user_config_dir("GravBall", "skandabhairava"))
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
+        self.CONFIG_FILE = CONFIG_DIR / "GravBall_config.json"
         try:
-            with open("player_config.json", "r") as config:
+            with open(self.CONFIG_FILE, "r") as config:
                 self.player_config = json.loads(config.read())
         except FileNotFoundError:
             self.fix_broken_config()
 
         if not isinstance(self.player_config["volume"], float|int):
-            print(">> GAME: 'volume' in player_config should be a float or int value")
+            print(">> GAME: 'volume' in GravBall_config should be a float or int value")
             return
         audio_factory.set_volume(self.player_config["volume"])
 
@@ -69,7 +75,7 @@ class GravClient:
         self.window_title = "Grav Ball"
 
         if not isinstance(self.player_config["postprocess"], int):
-            print(">> GAME: 'postprocess' in player_config should be an integer value. 0 -> to disable, any other int -> enable")
+            print(">> GAME: 'postprocess' in GravBall_config should be an integer value. 0 -> to disable, any other int -> enable")
             exit()
         self.postprocess = bool(self.player_config["postprocess"])
         self.window: pygame.Surface
@@ -201,7 +207,7 @@ class GravClient:
         self.anim_ball_comeback = UI.Animation(0, UI.set_anim_ball_comeback, 60)
 
         if not isinstance(self.player_config["game_time"], int):
-            print(">> GAME: 'game_time' in player config should be an integer < 3600")
+            print(">> GAME: 'game_time' in GravBall_config should be an integer < 3600")
             exit()
         self.gameplay = Gameplay(self.player_config["game_time"], userevents.WINNER_DECLARED, userevents.POWER_UP_GAIN_EVENT, userevents.POWER_UP_DESTROY_EVENT)
         #self.gameplay = Gameplay(15, WINNER_DECLARED)
@@ -225,7 +231,7 @@ class GravClient:
                 "volume": 0.1,
                 "game_time": 1200
             }
-        with open("player_config.json", "w") as config:
+        with open(self.CONFIG_FILE, "w") as config:
             config.write(json.dumps(self.player_config))
 
     def postprocess_enable(self):
@@ -699,7 +705,7 @@ class GravClient:
         self.player_config["color"] = [self.left_color.r, self.left_color.g, self.left_color.b]
         self.player_config["opposite_color"] = [self.right_color.r, self.right_color.g, self.right_color.b]
 
-        with open("player_config.json", "w") as config:
+        with open(self.CONFIG_FILE, "w") as config:
             config.write(json.dumps(self.player_config))
 
     def win_screen(self, width, height):
@@ -955,6 +961,9 @@ class GravClient:
 
     def display(self):
         self.running = True
+
+        print(f">> GAME: Config is located in: {self.CONFIG_FILE}")
+
         time = 0.0
         audio_factory.AUDIO_LIBRARY["MAIN_MENU"].play(-1)
         while self.running:

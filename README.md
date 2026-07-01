@@ -33,7 +33,5 @@ source .venv/bin/activate #on linux
 uv run src/main.py
 ```
 
-4. Optionally edit the `player_config.json` to edit game configurations.
-
 ### Where to find:
 Code: [Github](https://github.com/skandabhairava/GravBall)
